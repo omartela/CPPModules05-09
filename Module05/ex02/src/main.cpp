@@ -19,73 +19,81 @@
 
 int main()
 {
-    Bureaucrat b1("B1", 1);
-    Bureaucrat b2("B2", 150);
-    Bureaucrat b3("B3", 75);
-    Bureaucrat b4("B4", 1);
-    Bureaucrat b5("B5", 150);
-    Bureaucrat b6("B6", 75);
+    // Test case 1: ShrubberyCreationForm with valid Bureaucrat
+    try
+    {
+        Bureaucrat b1("Alice", 1);
+        ShrubberyCreationForm f1("home");
+        b1.signForm(f1);
+        b1.executeForm(f1);
+    }
+    catch (const std::exception &e)
+    {
+        std::cout << e.what() << std::endl;
+    }
 
-    RobotomyRequestForm r1("R1");
-    PresidentialPardonForm p1("P1");
-    ShrubberyCreationForm s1("S1");
+    // Test case 2: RobotomyRequestForm with valid Bureaucrat
+    try
+    {
+        Bureaucrat b2("Bob", 1);
+        RobotomyRequestForm f2("target");
+        b2.signForm(f2);
+        b2.executeForm(f2);
+    }
+    catch (const std::exception &e)
+    {
+        std::cout << e.what() << std::endl;
+    }
 
-    std::cout << b1 << std::endl;
-    std::cout << b2 << std::endl;
-    std::cout << b3 << std::endl;
-    std::cout << b4 << std::endl;
-    std::cout << b5 << std::endl;
-    std::cout << b6 << std::endl;
+    // Test case 3: PresidentialPardonForm with valid Bureaucrat
+    try
+    {
+        Bureaucrat b3("Charlie", 1);
+        PresidentialPardonForm f3("target");
+        b3.signForm(f3);
+        b3.executeForm(f3);
+    }
+    catch (const std::exception &e)
+    {
+        std::cout << e.what() << std::endl;
+    }
 
-    std::cout << r1 << std::endl;
-    std::cout << p1 << std::endl;
-    std::cout << s1 << std::endl;
+    // Test case 4: ShrubberyCreationForm with Bureaucrat having too low grade to sign
+    try
+    {
+        Bureaucrat b4("Dave", 150);
+        ShrubberyCreationForm f4("home");
+        b4.signForm(f4);
+        b4.executeForm(f4);
+    }
+    catch (const std::exception &e)
+    {
+        std::cout << e.what() << std::endl;
+    }
 
-    b1.signForm(r1);
-    b1.signForm(p1);
-    b1.signForm(s1);
+    // Test case 5: RobotomyRequestForm with Bureaucrat having too low grade to execute
+    try
+    {
+        Bureaucrat b5("Eve", 72);
+        RobotomyRequestForm f5("target");
+        b5.signForm(f5);
+        b5.executeForm(f5);
+    }
+    catch (const std::exception &e)
+    {
+        std::cout << e.what() << std::endl;
+    }
 
-    b1.executeForm(r1);
-    b1.executeForm(p1);
-    b1.executeForm(s1);
-
-    b2.signForm(r1);
-    b2.signForm(p1);
-    b2.signForm(s1);
-
-    b2.executeForm(r1);
-    b2.executeForm(p1);
-    b2.executeForm(s1);
-
-    b3.signForm(r1);
-    b3.signForm(p1);
-    b3.signForm(s1);
-
-    b3.executeForm(r1);
-    b3.executeForm(p1);
-    b3.executeForm(s1);
-
-    b4.signForm(r1);
-    b4.signForm(p1);
-    b4.signForm(s1);
-
-    b4.executeForm(r1);
-    b4.executeForm(p1);
-    b4.executeForm(s1);
-
-    b5.signForm(r1);
-    b5.signForm(p1);
-    b5.signForm(s1);
-
-    b5.executeForm(r1);
-    b5.executeForm(p1);
-    b5.executeForm(s1);
-
-    b6.signForm(r1);
-    b6.signForm(p1);
-    b6.signForm(s1);
-
-    b6.executeForm(r1);
-    b6.executeForm(p1);
-    b6.executeForm(s1);
+    // Test case 6: PresidentialPardonForm with Bureaucrat having too low grade to sign
+    try
+    {
+        Bureaucrat b6("Frank", 26);
+        PresidentialPardonForm f6("target");
+        b6.signForm(f6);
+        b6.executeForm(f6);
+    }
+    catch (const std::exception &e)
+    {
+        std::cout << e.what() << std::endl;
+    }
 }

@@ -12,7 +12,7 @@
 
 #include "../inc/ScalarConverter.hpp"
 
-bool ScalarConverter::hasMultipleDots(const std::string &str)
+bool hasMultipleDots(const std::string &str)
 {
     size_t dotCount = 0;
     for (char c : str)
@@ -27,7 +27,7 @@ bool ScalarConverter::hasMultipleDots(const std::string &str)
     return false;
 }
 
-int ScalarConverter::getPrecision(const std::string &str)
+int getPrecision(const std::string &str)
 {
     size_t dotPos = str.find('.');
     if (dotPos == std::string::npos)
@@ -40,24 +40,24 @@ int ScalarConverter::getPrecision(const std::string &str)
     return endPos - dotPos - 1;
 }
 
-bool ScalarConverter::isChar(const std::string &str)
+bool isChar(const std::string &str)
 {
     if (str.length() == 1 && std::isprint(str[0]) && !std::isdigit(static_cast<unsigned char>(str[0])))
 		return true;
     return false;
 }
 
-bool ScalarConverter::isInf(const std::string &str)
+bool isInf(const std::string &str)
 {
     return str == "-inff" || str == "+inff" || str == "-inf" || str == "+inf";
 }
 
-bool ScalarConverter::isNan(const std::string &str)
+bool isNan(const std::string &str)
 {
     return str == "nanf" || str == "nan";
 }
 
-bool ScalarConverter::isInt(const std::string &str)
+bool isInt(const std::string &str)
 {
     if (str.empty())
         return false;
@@ -74,7 +74,7 @@ bool ScalarConverter::isInt(const std::string &str)
     return true;
 }
 
-bool ScalarConverter::isFloat(const std::string &str)
+bool isFloat(const std::string &str)
 {
     if (str.empty())
         return false;
@@ -105,7 +105,7 @@ bool ScalarConverter::isFloat(const std::string &str)
     return true;
 }
 
-bool ScalarConverter::isDouble(const std::string &str)
+bool isDouble(const std::string &str)
 {
     if (str.empty())
         return false;
@@ -127,7 +127,7 @@ bool ScalarConverter::isDouble(const std::string &str)
     return true;
 }
 
-void ScalarConverter::convertChar(const std::string &str)
+void convertChar(const std::string &str,  int &charconverted)
 {
     if (str.length() == 1 && std::isprint(str[0]))
         std::cout << "char: '" << str[0] << "'" << std::endl;
@@ -135,13 +135,39 @@ void ScalarConverter::convertChar(const std::string &str)
         std::cout << "char: Non displayable" << std::endl;
     else
         std::cout << "char: impossible" << std::endl;
+    charconverted = 1;
 }
 
-void ScalarConverter::convertInt(const std::string &str)
+void maybeConvertChar(long double i)
+{
+    if (i < CHAR_MAX && i > CHAR_MIN)
+    {
+        if (std::isprint(i))
+        {
+            char c = static_cast<char>(i);
+            std::cout << "char: '" << c << "'" << std::endl;
+        }
+        else
+        {
+            std::cout << "char: Non displayable" << std::endl;
+        }
+    }
+    else
+    {
+        std::cout << "char: impossible" << std::endl;
+    }
+}
+
+void convertInt(const std::string &str, int &charconverted)
 {
     try
     {
         int i = std::stoi(str);
+        if (!charconverted)
+        {
+            maybeConvertChar(i);
+            charconverted = 1;
+        }
         std::cout << "int: " << i << std::endl;
     }
     catch(const std::exception& e)
@@ -150,12 +176,17 @@ void ScalarConverter::convertInt(const std::string &str)
     }
 }
 
-void ScalarConverter::convertFloat(const std::string &str)
+void convertFloat(const std::string &str,  int &charconverted)
 {
     try
     {
         float f = std::stof(str);
         int precision = getPrecision(str);
+        if (!charconverted)
+        {
+            maybeConvertChar(f);
+            charconverted = 1;
+        }
         std::cout << "float: " << std::fixed << std::setprecision(precision) << f << "f" << std::endl;
     }
     catch(const std::exception& e)
@@ -164,12 +195,17 @@ void ScalarConverter::convertFloat(const std::string &str)
     }
 }
 
-void ScalarConverter::convertDouble(const std::string &str)
+void convertDouble(const std::string &str,  int &charconverted)
 {
     try
     {
         double d = std::stod(str);
         int precision = getPrecision(str);
+        if (!charconverted)
+        {
+            maybeConvertChar(d);
+            charconverted = 1;
+        }
         std::cout << "double: " << std::fixed << std::setprecision(precision) << d << std::endl;
     }
     catch(const std::exception& e)
@@ -180,6 +216,7 @@ void ScalarConverter::convertDouble(const std::string &str)
 
 void ScalarConverter::convert(const std::string &str)
 {
+    int charconverted = 0;
     if (str.empty() || hasMultipleDots(str))
     {
         std::cout << "char: impossible" << std::endl;
@@ -206,13 +243,13 @@ void ScalarConverter::convert(const std::string &str)
         return;
     }
 
-    bool (*checkers[4]) (const std::string &str)= {
+    bool (*checkers[4]) (const std::string &str) = {
         isChar,
         isInt,
         isFloat,
         isDouble,
     };
-    void (*converters[4]) (const std::string &str)= {
+    void (*converters[4]) (const std::string &str,  int &charconverted) = {
         convertChar,
         convertInt,
         convertFloat,
@@ -223,22 +260,7 @@ void ScalarConverter::convert(const std::string &str)
     {
         if (checkers[i](str))
         {
-            converters[i](str);
-        }
-        else if (i == 0)
-        {
-            if (str.length() == 1)
-            {
-                int i = std::stoi(str);
-                if (!std::isprint(i))
-                {
-                    std::cout << "char: Non displayable" << std::endl;
-                }
-                else
-                    std::cout << "char: impossible" << std::endl;
-            }
-            else
-                std::cout << "char: impossible" << std::endl;
+            converters[i](str, charconverted);
         }
         else if (i == 1)
         {

@@ -71,8 +71,6 @@ bool ScalarConverter::isInt(const std::string &str)
         if (!std::isdigit(static_cast<unsigned char>(str[i])) || str[i] == '.')
             return false;
     }
-    if (str.back() == '.')
-        return false;
     return true;
 }
 
@@ -102,8 +100,6 @@ bool ScalarConverter::isFloat(const std::string &str)
                 return false;
         }
     }
-    if (str.back() == '.')
-        return false;
     if (fflag == 1 && str[str.length() - 1] != 'f')
         return false;
     return true;
@@ -128,8 +124,6 @@ bool ScalarConverter::isDouble(const std::string &str)
                 return false;
         }
     }
-    if (str.back() == '.')
-        return false;
     return true;
 }
 
@@ -152,7 +146,6 @@ void ScalarConverter::convertInt(const std::string &str)
     }
     catch(const std::exception& e)
     {
-        std::cerr << e.what() << std::endl;
         std::cout << "int: impossible" << std::endl;
     }
 }
@@ -167,7 +160,6 @@ void ScalarConverter::convertFloat(const std::string &str)
     }
     catch(const std::exception& e)
     {
-        std::cerr << e.what() << std::endl;
         std::cout << "float: impossible" << std::endl;
     }
 }
@@ -182,7 +174,6 @@ void ScalarConverter::convertDouble(const std::string &str)
     }
     catch(const std::exception& e)
     {
-        std::cerr << e.what() << std::endl;
         std::cout << "double: impossible" << std::endl;
     }
 }
@@ -228,11 +219,26 @@ void ScalarConverter::convert(const std::string &str)
         convertDouble
     };
 
-    for (size_t i = 0; i < 5; ++i)
+    for (size_t i = 0; i < 4; ++i)
     {
         if (checkers[i](str))
         {
             converters[i](str);
+        }
+        else if (i == 0)
+        {
+            if (str.length() == 1)
+            {
+                int i = std::stoi(str);
+                if (!std::isprint(i))
+                {
+                    std::cout << "char: Non displayable" << std::endl;
+                }
+                else
+                    std::cout << "char: impossible" << std::endl;
+            }
+            else
+                std::cout << "char: impossible" << std::endl;
         }
         else if (i == 1)
         {

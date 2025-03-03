@@ -47,16 +47,6 @@ bool isChar(const std::string &str)
     return false;
 }
 
-bool isInf(const std::string &str)
-{
-    return str == "-inff" || str == "+inff" || str == "-inf" || str == "+inf";
-}
-
-bool isNan(const std::string &str)
-{
-    return str == "nanf" || str == "nan";
-}
-
 bool isInt(const std::string &str)
 {
     if (str.empty())
@@ -127,96 +117,83 @@ bool isDouble(const std::string &str)
     return true;
 }
 
-void convertChar(const std::string &str,  int &charconverted)
+
+static void handleSpecialCases(const std::string &str) 
 {
-    if (str.length() == 1 && std::isprint(str[0]))
-        std::cout << "char: '" << str[0] << "'" << std::endl;
-    else if (str.length() == 1)
-        std::cout << "char: Non displayable" << std::endl;
-    else
-        std::cout << "char: impossible" << std::endl;
-    charconverted = 1;
+        if (str == "-inff" || str == "+inff") 
+        {
+            std::cout << "char: impossible" << std::endl;
+            std::cout << "int: impossible" << std::endl;
+            std::cout << "float: " << str << std::endl;
+            std::cout << "double: " << (str == "-inff" ? "-inf" : "+inf") << std::endl;
+        } else if (str == "nanf" || str == "nan") 
+        {
+            std::cout << "char: impossible" << std::endl;
+            std::cout << "int: impossible" << std::endl;
+            std::cout << "float: " << str << std::endl;
+            std::cout << "double: " << str << std::endl;
+        }
 }
 
-void maybeConvertChar(long double i)
+static void handleInt(int value, int precision) 
 {
-    if (i < CHAR_MAX && i > CHAR_MIN)
-    {
-        if (std::isprint(i))
-        {
-            char c = static_cast<char>(i);
-            std::cout << "char: '" << c << "'" << std::endl;
-        }
-        else
-        {
-            std::cout << "char: Non displayable" << std::endl;
-        }
+    std::cout << "char: ";
+    if (value >= CHAR_MIN && CHAR_MAX <= 255 && isprint(value)) {
+        std::cout << "'" << static_cast<char>(value) << "'" << std::endl;
+    } else {
+        std::cout << "Non displayable" << std::endl;
     }
-    else
-    {
-        std::cout << "char: impossible" << std::endl;
-    }
+    std::cout << "int: " << std::fixed << std::setprecision(precision) << value << std::endl;
+    std::cout << "float: " << std::fixed << std::setprecision(precision) << static_cast<float>(value) << "f" << std::endl;
+    std::cout << "double: " << std::fixed << std::setprecision(precision) << static_cast<double>(value) << std::endl;
 }
 
-void convertInt(const std::string &str, int &charconverted)
+static void handleFloat(float value, int precision) 
 {
-    try
+    std::cout << "char: ";
+    if (value >= CHAR_MIN && value <= CHAR_MAX && isprint(static_cast<int>(value))) 
     {
-        int i = std::stoi(str);
-        if (!charconverted)
-        {
-            maybeConvertChar(i);
-            charconverted = 1;
-        }
-        std::cout << "int: " << i << std::endl;
-    }
-    catch(const std::exception& e)
+        std::cout << "'" << static_cast<char>(value) << "'" << std::endl;
+    } 
+    else 
     {
-        std::cout << "int: impossible" << std::endl;
+        std::cout << "Non displayable" << std::endl;
     }
+    if (value < static_cast<float>(std::numeric_limits<int>::max()) && 
+        value > static_cast<float>(std::numeric_limits<int>::min()))
+    {
+        std::cout << "int: " << static_cast<int>(value) << std::endl;
+    }
+    std::cout << "float: " << std::fixed << std::setprecision(precision) << value << "f" << std::endl;
+    std::cout << "double: " << std::fixed << std::setprecision(precision) << static_cast<double>(value) << std::endl;
 }
 
-void convertFloat(const std::string &str,  int &charconverted)
+static void handleDouble(double value, int precision) 
 {
-    try
+    std::cout << "char: ";
+    if (value >= CHAR_MIN && value <= CHAR_MAX && isprint(static_cast<int>(value))) 
     {
-        float f = std::stof(str);
-        int precision = getPrecision(str);
-        if (!charconverted)
-        {
-            maybeConvertChar(f);
-            charconverted = 1;
-        }
-        std::cout << "float: " << std::fixed << std::setprecision(precision) << f << "f" << std::endl;
-    }
-    catch(const std::exception& e)
+        std::cout << "'" << static_cast<char>(value) << "'" << std::endl;
+    } 
+    else 
     {
-        std::cout << "float: impossible" << std::endl;
+        std::cout << "Non displayable" << std::endl;
     }
-}
-
-void convertDouble(const std::string &str,  int &charconverted)
-{
-    try
+    if (value < static_cast<double>(std::numeric_limits<int>::max()) && 
+        value > static_cast<double>(std::numeric_limits<int>::min()))
     {
-        double d = std::stod(str);
-        int precision = getPrecision(str);
-        if (!charconverted)
-        {
-            maybeConvertChar(d);
-            charconverted = 1;
-        }
-        std::cout << "double: " << std::fixed << std::setprecision(precision) << d << std::endl;
+        std::cout << "int: " << std::fixed << std::setprecision(precision) << static_cast<int>(value) << std::endl;
     }
-    catch(const std::exception& e)
+    if (value < static_cast<double>(std::numeric_limits<float>::max()) && 
+        value > static_cast<double>(std::numeric_limits<float>::min()))
     {
-        std::cout << "double: impossible" << std::endl;
+        std::cout << "float: " << std::fixed << std::setprecision(precision) << static_cast<float>(value) << "f" << std::endl;
     }
+    std::cout << "double: " << std::fixed << std::setprecision(precision) << value << std::endl;
 }
 
 void ScalarConverter::convert(const std::string &str)
 {
-    int charconverted = 0;
     if (str.empty() || hasMultipleDots(str))
     {
         std::cout << "char: impossible" << std::endl;
@@ -225,54 +202,38 @@ void ScalarConverter::convert(const std::string &str)
         std::cout << "double: impossible" << std::endl;
         return;
     }
-
-    if (isInf(str) || isNan(str))
+    if (str == "-inff" || str == "+inff" || str == "nanf" ||
+        str == "-inf" || str == "+inf" || str == "nan") 
     {
-        std::cout << "char: impossible" << std::endl;
-        std::cout << "int: impossible" << std::endl;
-        if (str.back() == 'f')
-        {
-            std::cout << "float: " << str << std::endl;
-            std::cout << "double: " << str.substr(0, str.size() - 1) << std::endl;
-        }
-        else
-        {
-            std::cout << "float: " << str << "f" << std::endl;
-            std::cout << "double: " << str << std::endl;
-        }
+        handleSpecialCases(str);
         return;
     }
-
-    bool (*checkers[4]) (const std::string &str) = {
-        isChar,
-        isInt,
-        isFloat,
-        isDouble,
-    };
-    void (*converters[4]) (const std::string &str,  int &charconverted) = {
-        convertChar,
-        convertInt,
-        convertFloat,
-        convertDouble
-    };
-
-    for (size_t i = 0; i < 4; ++i)
+    int precision = getPrecision(str);
+    try 
     {
-        if (checkers[i](str))
-        {
-            converters[i](str, charconverted);
-        }
-        else if (i == 1)
-        {
-            std::cout << "int: impossible" << std::endl;
-        }
-        else if (i == 2)
-        {
-            std::cout << "float: impossible" << std::endl;
-        }
-        else if (i == 3)
-        {
-            std::cout << "double: impossible" << std::endl;
-        }
+        int intValue = std::stoi(str);
+        handleInt(intValue, precision);
+        return;
+    } catch (...) 
+    {
+        std::cout << "int: impossible" << std::endl;
+    }
+    try 
+    {
+        float floatValue = std::stof(str);
+        handleFloat(floatValue, precision);
+        return;
+    } catch (...) 
+    {
+        std::cout << "float: impossible" << std::endl;
+    }
+    try 
+    {
+        double doubleValue = std::stod(str);
+        handleDouble(doubleValue, precision);
+        return;
+    } catch (...) 
+    {
+        std::cout << "double: impossible" << str << std::endl;
     }
 }

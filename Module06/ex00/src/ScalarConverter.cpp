@@ -29,22 +29,18 @@ template <class T> T stringToType(std::string str)
 
 bool isInteger(std::string str) 
 {
-    if (str.back() == 'f')
-        str.pop_back();
     std::stringstream ss(str);
     int intValue; 
     ss >> intValue; 
-    return ss.eof() && !ss.fail(); // Check if we reached the end and no conversion error occurred 
+    return ss.eof() && !ss.fail();
 }
 
 bool isDouble(std::string str) 
 {
-    if (str.back() == 'f')
-        str.pop_back();
     std::stringstream ss(str); 
     double doubleValue; 
     ss >> doubleValue; 
-    return ss.eof() && !ss.fail(); // Check if we reached the end and no conversion error occurred 
+    return ss.eof() && !ss.fail();
 }
  
 bool isFloat(std::string str) 
@@ -54,12 +50,12 @@ bool isFloat(std::string str)
     std::stringstream ss(str); 
     float floatValue; 
     ss >> floatValue; 
-    return ss.eof() && !ss.fail(); // Check if we reached the end and no conversion error occurred 
+    return ss.eof() && !ss.fail();
 } 
  
 bool isCharacter(const std::string str) 
 { 
-    return str.length() == 1 && std::isalpha(str[0]); // Check if it's a single alphabetic character 
+    return str.length() == 1 && std::isalpha(str[0]);
 } 
 
 bool hasMultipleDots(const std::string &str)
@@ -111,9 +107,48 @@ static void handleSpecialCases(const std::string &str)
     }
 }
 
-void tryConvert(const std::string &str)
+bool isValidRemainder(const std::string& str)
 {
-    int precision = getPrecision(str);
+    for (size_t i = 0; i < str.length(); ++i)
+    {
+        if (str[i] == '.')
+        {
+            if (i != 0) 
+                return false;
+        }
+        else if (!isdigit(str[i])) 
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+int floatDoubleToInt(const std::string &str)
+{
+    std::string copystr = str;
+    if (copystr.back() == 'f')
+        copystr.pop_back();
+    std::istringstream iss(copystr);
+    int value;
+    iss >> value;
+    if (iss.fail())
+    {
+        throw std::runtime_error("impossible");
+    }
+    if (!iss.eof())
+    {
+        std::string remainder = copystr.substr(iss.tellg());
+        if (!isValidRemainder(remainder))
+        {
+            throw std::runtime_error("impossible");
+        }
+    }
+    return value;
+}
+
+void convertChar(const std::string &str)
+{
     try
     {
         if (str.length() == 1 && isalpha(str[0]))
@@ -122,7 +157,7 @@ void tryConvert(const std::string &str)
         }
         else
         {
-            int value = stringToType<int>(str);
+            int value = floatDoubleToInt(str);
             std::cout << "char: ";
             if (value >= CHAR_MIN && value <= CHAR_MAX && isprint(static_cast<int>(value))) 
             {
@@ -138,6 +173,29 @@ void tryConvert(const std::string &str)
     {
         std::cout << "char: impossible" << std::endl;
     }
+}
+
+void convertCharToInt(const std::string &str)
+{
+    int value = static_cast<int>(str[0]);
+    std::cout << "int: " << value << std::endl;
+}
+
+void convertCharToFloat(const std::string &str)
+{
+    int value = static_cast<float>(str[0]);
+    std::cout << "float: " << value << std::endl;
+}
+
+void convertCharToDouble(const std::string &str)
+{
+    int value = static_cast<double>(str[0]);
+    std::cout << "double: " << value << std::endl;
+}
+
+void convertInt(const std::string &str)
+{
+    int precision = getPrecision(str);
     try
     {
         int value = stringToType<int>(str);
@@ -147,6 +205,25 @@ void tryConvert(const std::string &str)
     {
         std::cout << "int: impossible" << std::endl;
     }
+}
+
+void convertFloatDoubleToInt(const std::string &str)
+{
+    int precision = getPrecision(str);
+    try
+    {
+        int value = floatDoubleToInt(str);
+        std::cout << "int: " << std::fixed << std::setprecision(precision) << value << std::endl;
+    }
+    catch(const std::exception& e)
+    {
+        std::cout << "int: impossible" << std::endl;
+    }
+}
+
+void convertFloat(const std::string &str)
+{
+    int precision = getPrecision(str);
     try
     {
         float value = stringToType<float>(str);
@@ -156,6 +233,11 @@ void tryConvert(const std::string &str)
     {
         std::cout << "float: impossible" << std::endl;
     }
+}
+
+void convertDouble(const std::string &str)
+{
+    int precision = getPrecision(str);
     try
     {
         double value = stringToType<double>(str);
@@ -183,9 +265,33 @@ void ScalarConverter::convert(const std::string &str)
         handleSpecialCases(str);
         return;
     }
-    if (isInteger(str) || isDouble(str) || isFloat(str) || isCharacter(str))
+    if (isCharacter(str))
     {
-        tryConvert(str);
+        convertChar(str);
+        convertCharToInt(str);
+        convertCharToFloat(str);
+        convertCharToDouble(str);
+    }
+    else if (isInteger(str))
+    {
+        convertChar(str);
+        convertInt(str);
+        convertFloat(str);
+        convertDouble(str);
+    }
+    else if (isDouble(str))
+    {
+        convertChar(str);
+        convertFloatDoubleToInt(str);
+        convertFloat(str);
+        convertDouble(str);
+    }
+    else if (isFloat(str))
+    {
+        convertChar(str);
+        convertFloatDoubleToInt(str);
+        convertFloat(str);
+        convertDouble(str);
     }
     else
     {

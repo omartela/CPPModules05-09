@@ -20,7 +20,7 @@ template <typename T>
 Array<T>::Array(const unsigned int n)
 {
 	length = n;
-	array = new T[n];
+	array = new T[n]();
 }
 
 template <typename T>

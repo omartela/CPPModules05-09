@@ -16,7 +16,7 @@ TARGET = array
 INC_DIR = inc
 SRC = src/main.cpp
 OBJ = $(SRC:.cpp=.o)
-CFLAGS = -Wall -Wextra -Werror -I$(INC_DIR)
+CFLAGS = -g -Wall -Wextra -Werror -I$(INC_DIR)
 
 all: $(TARGET)
 

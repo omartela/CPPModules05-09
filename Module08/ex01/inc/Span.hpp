@@ -10,7 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#pragma once
 #include <iostream>
+#include <vector>
 
 class Span
 {
@@ -20,6 +22,12 @@ class Span
 		~Span();
 		Span(const Span& s);
 		Span& operator=(const Span& s);
+		void  addNumber(int number);
+		unsigned int shortestSpan();
+		unsigned int longestSpan();
+		void addRange(std::vector<int>::iterator first, std::vector<int>::iterator last);
+
 	private:
-		unsigned int maximum;
+		unsigned int _maximum;
+		std::vector<int> _vector;
 };

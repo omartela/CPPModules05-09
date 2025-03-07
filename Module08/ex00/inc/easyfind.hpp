@@ -12,18 +12,16 @@
 
 #pragma once
 #include <iostream>
+#include <algorithm>
 
 template <typename T> int easyfind(T container, int n)
 {
-	auto it = container.begin();
-	while (it != container.end())
+	auto it = std::find(container.begin(), container.end(), n);
+	if (it != container.end())
 	{
-		if (*it == n)
-		{
-			std::cout << "Found " << *it << std::endl;
-			return *it;
-		}
-		it++;
+		std::cout << "Found " << *it << std::endl;
+		return *it;
 	}
-	throw std::runtime_error("Value cannot be found in the container");
+	else
+		throw std::runtime_error("Value cannot be found in the container");
 }

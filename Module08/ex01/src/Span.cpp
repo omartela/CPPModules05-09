@@ -58,10 +58,18 @@ unsigned int Span::shortestSpan()
 	copyvector = _vector;
 	std::sort(copyvector.begin(), copyvector.end());
 
-	unsigned int min_span = std::abs(copyvector[1] - copyvector[0]);
+	unsigned int min_span;
+	if (copyvector[1] > copyvector[0])
+		min_span = copyvector[1] - copyvector[0];
+	else
+		min_span = copyvector[0] - copyvector[1];
 	for (auto it = copyvector.begin(); it != copyvector.end() - 1; ++it) 
 	{
-        unsigned int span = std::abs(*(std::next(it)) - *it);
+        unsigned int span;
+		if (*(std::next(it)) > *it)
+			span = *(std::next(it)) - *it;
+		else
+			span = *it - *(std::next(it));
         min_span = std::min(min_span, span);
     }
 	return (min_span);

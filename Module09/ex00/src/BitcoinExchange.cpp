@@ -39,7 +39,7 @@ BitcoinExchange &BitcoinExchange::operator=(const BitcoinExchange &src)
 	}
 }
 
-bool isValidValue(std::string value, std::string line)
+bool BitcoinExchange::isValidValue(std::string value, std::string line)
 {
 	if (value.back() == 'f')
         value.pop_back();
@@ -69,7 +69,7 @@ bool isValidValue(std::string value, std::string line)
 
 }
 
-int convertValue(std::string str) 
+int BitcoinExchange::convertValue(std::string str) 
 { 
     if (str.back() == 'f')
         str.pop_back();
@@ -79,15 +79,53 @@ int convertValue(std::string str)
     return intValue;
 } 
 
-bool isValidDate(std::string date)
-{
-	std::regex pattern(R"((\d{4}-\d{2}-\d{2}))");
-    std::smatch matches;
-}
 
 void BitcoinExchange::processLines()
 {
 	
+}
+
+bool BitcoinExchange::isLeapYear(int year)
+{
+	// Leap year if divisible by 4, but not by 100 unless also divisible by 400
+	 return (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
+}
+
+bool BitcoinExchange::isValidDate(std::string date) 
+{
+	int day;
+	int month;
+	int year;
+
+	if (date.empty())
+		return false;
+	std::stringstream streamLine(date);
+	std::string d;
+	std::string m;
+	std::string y;
+
+	getline(y, date, '-');
+	getline(m, date, '-');
+	getline(d, date);
+
+	year = convertValue(y);
+	month = convertValue(m);
+	day = convertValue(d);
+    // Check if the month is valid (1 to 12)
+    if (month < 1 || month > 12) 
+        return false;
+    
+    // Days in each month for non-leap years
+    int daysInMonth[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+    
+    // Adjust for leap year (February)
+    if (isLeapYear(year)) 
+        daysInMonth[1] = 29; // February has 29 days in a leap year
+    
+    // Check if the day is valid for the month
+    if (day < 1 || day > daysInMonth[month - 1]) 
+        return false;
+    return true;
 }
 
 void BitcoinExchange::readCsv()
@@ -137,12 +175,10 @@ void BitcoinExchange::readfile()
     	std::regex pattern(R"((\d{4}-\d{2}-\d{2})\s*\|\s*(-?\d+(\.\d+)?)))");
     	std::smatch matches;
 
-    while (std::getline(file, line)) 
-	{
         if (std::regex_match(line, matches, pattern)) 
 		{
-            std::string date = matches[1];  // First capture group: date
-            std::string number = matches[2]; // Second capture group: number
+            std::string date = matches[1];
+            std::string number = matches[2];
 			if (isValidDate(date) && isValidValue(number, line))
 			{
 
@@ -150,7 +186,7 @@ void BitcoinExchange::readfile()
 		}
 		else
 		{
-			/// error bad input
+			std::cout << "Error: bad input" << std::endl;
 		}
 	}
 }

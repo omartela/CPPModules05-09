@@ -14,29 +14,25 @@
 #include <fstream>
 #include <regex>
 
-BitcoinExchange::BitcoinExchange()
+BitcoinExchange::BitcoinExchange() 
 {
+	readCsv();
 }
 
-BitcoinExchange::BitcoinExchange(std::string filename) 
-{
-}
-
-BitcoinExchange::~BitcoinExchange()
-{
-}
+BitcoinExchange::~BitcoinExchange() {}
 
 BitcoinExchange::BitcoinExchange(const BitcoinExchange &src)
 {
-
+	_data = src._data;
 }
 
 BitcoinExchange &BitcoinExchange::operator=(const BitcoinExchange &src)
 {
 	if (this != &src)
 	{
-
+		_data = src._data;
 	}
+	return *this;
 }
 
 bool BitcoinExchange::isValidValue(std::string value, std::string line)
@@ -66,7 +62,7 @@ bool BitcoinExchange::isValidValue(std::string value, std::string line)
 		std::cout << "Error: too large a number." << std::endl;
 		return (false);
 	}
-
+	return true;
 }
 
 int BitcoinExchange::convertValue(std::string str) 
@@ -78,12 +74,6 @@ int BitcoinExchange::convertValue(std::string str)
     ss >> intValue; 
     return intValue;
 } 
-
-
-void BitcoinExchange::processLines()
-{
-	
-}
 
 bool BitcoinExchange::isLeapYear(int year)
 {
@@ -104,9 +94,9 @@ bool BitcoinExchange::isValidDate(std::string date)
 	std::string m;
 	std::string y;
 
-	getline(y, date, '-');
-	getline(m, date, '-');
-	getline(d, date);
+	getline(streamLine, y, '-');
+	getline(streamLine, m, '-');
+	getline(streamLine, d);
 
 	year = convertValue(y);
 	month = convertValue(m);
@@ -126,6 +116,26 @@ bool BitcoinExchange::isValidDate(std::string date)
     if (day < 1 || day > daysInMonth[month - 1]) 
         return false;
     return true;
+}
+
+float BitcoinExchange::findClosestValue(std::string date)
+{
+	auto it = _data.find(date);
+	if (it != _data.end())
+		return it->second;
+	else
+	{
+		it = _data.lower_bound(date);
+		if (it == _data.begin())
+		{
+			// no smaller date exist;
+			return -1;
+		}
+		if (it != _data.end() && it->first > date)
+			--it;
+		return it->second;
+	}
+	return it->second;
 }
 
 void BitcoinExchange::readCsv()
@@ -155,9 +165,9 @@ void BitcoinExchange::readCsv()
 	}
 }
 
-void BitcoinExchange::readfile()
+void BitcoinExchange::readfile(std::string filename)
 {
-	std::ifstream file(_filename);
+	std::ifstream file(filename);
 	
 	if (!file.is_open())
 	{
@@ -172,8 +182,9 @@ void BitcoinExchange::readfile()
 	while (getline(file, line))
 	{
 		std::string line;
-    	std::regex pattern(R"((\d{4}-\d{2}-\d{2})\s*\|\s*(-?\d+(\.\d+)?)))");
+    	std::regex pattern(R"(\d{4}-\d{2}-\d{2}\s*\|\s*-?\d+(\.\d+)?)");
     	std::smatch matches;
+		std::cout << "line is" << line << std::endl;
 
         if (std::regex_match(line, matches, pattern)) 
 		{
@@ -181,7 +192,13 @@ void BitcoinExchange::readfile()
             std::string number = matches[2];
 			if (isValidDate(date) && isValidValue(number, line))
 			{
-
+				float rate = findClosestValue(date);
+				float value = convertValue(number);
+				if (rate != -1)
+				{
+					 float result = rate * value;
+					 std::cout << date << "=>" << value << "=" << result << std::endl;
+				}
 			}
 		}
 		else

@@ -16,20 +16,20 @@
 class BitcoinExchange
 {
 	private:
-		std::string _filename;
 		std::map<std::string, float>	_data;
 	public:
 		BitcoinExchange();
-		BitcoinExchange(std::string filename);
 		~BitcoinExchange();
 		BitcoinExchange(const BitcoinExchange &src);
 		BitcoinExchange& operator=(const BitcoinExchange &src);
-		void readfile();
+		void readfile(std::string filename);
 		void processLines();
 		bool isValidValue(std::string value, std::string line);
 		bool isValidDate(std::string date);
 		int	convertValue(std::string str);
-		void	readCsv();	
+		void	readCsv();
+		bool isLeapYear(int year);
+		float findClosestValue(std::string date);
 };
 
 

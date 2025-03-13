@@ -6,7 +6,7 @@
 /*   By: omartela <omartela@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 11:45:33 by omartela          #+#    #+#             */
-/*   Updated: 2025/03/11 11:45:34 by omartela         ###   ########.fr       */
+/*   Updated: 2025/03/13 17:45:30 by omartela         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ class BitcoinExchange
 		void processLines();
 		bool isValidValue(std::string value, std::string line);
 		bool isValidDate(std::string date);
-		int	convertValue(std::string str);
+		float	convertValue(std::string str);
 		void	readCsv();
 		bool isLeapYear(int year);
 		float findClosestValue(std::string date);

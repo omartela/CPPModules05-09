@@ -6,7 +6,7 @@
 /*   By: omartela <omartela@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 11:45:54 by omartela          #+#    #+#             */
-/*   Updated: 2025/03/11 11:45:55 by omartela         ###   ########.fr       */
+/*   Updated: 2025/03/13 17:51:25 by omartela         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,8 @@ bool BitcoinExchange::isValidValue(std::string value, std::string line)
 	if (value.back() == 'f')
         value.pop_back();
     std::stringstream ss(value); 
-    int intValue; 
-    ss >> intValue;
+    float floatValue; 
+    ss >> floatValue;
 	if (!ss.eof())
 	{
 		std::cout << "Error: bad input " << line << std::endl;
@@ -52,12 +52,12 @@ bool BitcoinExchange::isValidValue(std::string value, std::string line)
 		std::cout << "Error: too large a number." << std::endl;
 		return (false);
 	}
-	if (intValue < 0)
+	if (floatValue < 0)
 	{
 		std::cout << "Error: not a positive number." << std::endl;
 		return (false);
 	}
-	if (intValue > 1000)
+	if (floatValue > 1000)
 	{
 		std::cout << "Error: too large a number." << std::endl;
 		return (false);
@@ -65,14 +65,14 @@ bool BitcoinExchange::isValidValue(std::string value, std::string line)
 	return true;
 }
 
-int BitcoinExchange::convertValue(std::string str) 
+float BitcoinExchange::convertValue(std::string str) 
 { 
     if (str.back() == 'f')
         str.pop_back();
     std::stringstream ss(str); 
-    int intValue; 
-    ss >> intValue; 
-    return intValue;
+    float floatValue; 
+    ss >> floatValue; 
+    return floatValue;
 } 
 
 bool BitcoinExchange::isLeapYear(int year)
@@ -181,10 +181,8 @@ void BitcoinExchange::readfile(std::string filename)
 	}
 	while (getline(file, line))
 	{
-		std::string line;
-    	std::regex pattern(R"(\d{4}-\d{2}-\d{2}\s*\|\s*-?\d+(\.\d+)?)");
+    	std::regex pattern(R"((\d{4}-\d{2}-\d{2})\s*\|\s*(-?\d+(\.\d+)?))");
     	std::smatch matches;
-		std::cout << "line is" << line << std::endl;
 
         if (std::regex_match(line, matches, pattern)) 
 		{
@@ -197,13 +195,13 @@ void BitcoinExchange::readfile(std::string filename)
 				if (rate != -1)
 				{
 					 float result = rate * value;
-					 std::cout << date << "=>" << value << "=" << result << std::endl;
+					 std::cout << date << " => " << value << " = " << result << std::endl;
 				}
 			}
 		}
 		else
 		{
-			std::cout << "Error: bad input" << std::endl;
+			std::cout << "Error: bad input" << " => " << line << std::endl;
 		}
 	}
 }

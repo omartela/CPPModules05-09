@@ -133,6 +133,8 @@ float BitcoinExchange::findClosestValue(std::string date)
 		}
 		if (it != _data.end() && it->first > date)
 			--it;
+		if (it == _data.end())
+			--it;
 		return it->second;
 	}
 	return it->second;
@@ -181,7 +183,7 @@ void BitcoinExchange::readfile(std::string filename)
 	}
 	while (getline(file, line))
 	{
-    	std::regex pattern(R"((\d{4}-\d{2}-\d{2})\s*\|\s*(-?\d+(\.\d+)?))");
+    	std::regex pattern(R"((\d{4}-\d{2}-\d{2})\s*\|\s*(-?\d+(\.\d+)?(f)?)\b)");
     	std::smatch matches;
 
         if (std::regex_match(line, matches, pattern)) 
@@ -197,6 +199,14 @@ void BitcoinExchange::readfile(std::string filename)
 					 float result = rate * value;
 					 std::cout << date << " => " << value << " = " << result << std::endl;
 				}
+				else
+				{
+					std::cout << "Error: bad input" << " => " << line << std::endl;
+				}
+			}
+			else
+			{
+				std::cout << "Error: bad input" << " => " << line << std::endl;
 			}
 		}
 		else

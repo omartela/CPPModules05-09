@@ -15,13 +15,14 @@
 template <class T>
 void swap (T &a, T &b) 
 {
-    T temp = a;
+    T temp; /// Need to do like this and not T temp = a; because otherwise the compiler does not know which copy assigment operator to use the implicit one or the one defined in class
+    temp = a;
     a = b;
     b = temp;
 }
 
 template <class T>
-T min (const T &a, const T &b)
+T const &min (const T &a, const T &b)
 {
     if (a == b)
         return b;
@@ -32,7 +33,7 @@ T min (const T &a, const T &b)
 }
 
 template <class T>
-T max (const T &a, const T &b)
+T const &max (const T &a, const T &b)
 {
     if (a == b)
         return b;

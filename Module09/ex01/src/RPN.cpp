@@ -6,16 +6,18 @@
 /*   By: omartela <omartela@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 09:46:18 by omartela          #+#    #+#             */
-/*   Updated: 2025/03/19 09:46:19 by omartela         ###   ########.fr       */
+/*   Updated: 2025/03/20 15:25:36 by omartela         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/RPN.hpp"
 #include <sstream>
+#include <climits> // For INT_MAX and INT_MIN
 
 RPN::RPN() 
 {
-	result = 0;
+	Noperands = 0;
+	Noperators = 0;
 }
 
 RPN::~RPN() {}
@@ -23,7 +25,13 @@ RPN::~RPN() {}
 RPN::RPN(const RPN &src)
 {
 	st = src.st;
-	result = src.result;
+}
+
+RPN &RPN::operator=(const RPN &src)
+{
+    if (this != &src)
+		st = src.st;
+    return *this;
 }
 
 bool RPN::isValidValue(std::string value)
@@ -55,19 +63,9 @@ int RPN::convertValue(std::string str)
     return IntValue;
 }
 
-RPN &RPN::operator=(const RPN &src)
-{
-    if (this != &src)
-    {
-		st = src.st;
-		result = src.result;
-    }
-    return *this;
-}
-
 void RPN::add(std::string str)
 {
-	float number = convertValue(str);
+	int number = convertValue(str);
 	st.push(number);
 }
 
@@ -93,33 +91,50 @@ double RPN::getNoperators()
 
 int RPN::getResult()
 {
-	return result;
+    if (st.empty())
+        throw std::runtime_error("Error: No result available");
+    return st.top();
 }
 
 void RPN::calculate(std::string str)
 {
-	if (st.empty())
-		throw std::runtime_error("Error:");
-	int number1 = st.top();
-	st.pop();
-	int number2 = 0;
-	if (st.size() >= 2)
-	{
-		number2 = st.top();
-		st.pop();
-	}
-	if (str == "-")
-		result += (number1 - number2);
-	else if (str == "+")
-		result += (number1 + number2);
-	else if (str == "/")
-	{
-		if (number2 == 0)
-			throw std::runtime_error("Error: Division by zero is not possible");
-		result += (number1 / number2);
-	}
-	else if (str == "*")
-		result += (number1 * number2);
-	else
-		throw std::runtime_error("Error: value is not operand or operator");
+    if (st.size() < 2)
+        throw std::runtime_error("Error: Not enough operands for operation");
+
+    int number2 = st.top();
+    st.pop();
+    int number1 = st.top();
+    st.pop();
+
+    double operationResult = 0; // Use double to handle intermediate results
+
+    if (str == "+")
+    {
+        operationResult = static_cast<double>(number1) + static_cast<double>(number2);
+    }
+    else if (str == "-")
+    {
+        operationResult = static_cast<double>(number1) - static_cast<double>(number2);
+    }
+    else if (str == "*")
+    {
+        operationResult = static_cast<double>(number1) * static_cast<double>(number2);
+    }
+    else if (str == "/")
+    {
+        if (number2 == 0)
+            throw std::runtime_error("Error: Division by zero is not possible");
+        operationResult = static_cast<double>(number1) / static_cast<double>(number2);
+    }
+    else
+    {
+        throw std::runtime_error("Error: Invalid operator");
+    }
+
+    // Check if the result is within the range of an int
+    if (operationResult > INT_MAX || operationResult < INT_MIN)
+        throw std::overflow_error("Error: Arithmetic overflow");
+
+    // Push the result back onto the stack as an int
+    st.push(static_cast<int>(operationResult));
 }

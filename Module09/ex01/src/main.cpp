@@ -6,7 +6,7 @@
 /*   By: omartela <omartela@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 10:18:14 by omartela          #+#    #+#             */
-/*   Updated: 2025/03/19 10:18:16 by omartela         ###   ########.fr       */
+/*   Updated: 2025/03/20 14:54:12 by omartela         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
         {
             if (!rpn.isValidValue(token) && !rpn.isOperator(token))
             {
-                std::cerr << "Error" << std::endl;
+                std::cerr << "Error: invalid operand" << std::endl;
                 return (-1);
             }
             if (rpn.isOperator(token))
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
                 rpn.incNoperands();
         }
         // The number of operands will always be one more than the number of operators
-        if (rpn.getNoperands() - rpn.getNoperators() < 1)
+        if (rpn.getNoperands() - rpn.getNoperators() != 1)
         {
             std::cerr << "Error: incorrect amount of operands or operators" << std::endl;
             return (-1);

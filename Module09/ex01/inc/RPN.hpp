@@ -6,7 +6,7 @@
 /*   By: omartela <omartela@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 09:46:08 by omartela          #+#    #+#             */
-/*   Updated: 2025/03/19 09:46:09 by omartela         ###   ########.fr       */
+/*   Updated: 2025/03/20 14:30:37 by omartela         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ class RPN
 
     private:
         std::stack<int> st;
-        int result;
         double Noperands; /// numbers
         double Noperators; /// - + / *
 

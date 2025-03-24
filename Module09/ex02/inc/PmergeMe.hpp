@@ -6,7 +6,7 @@
 /*   By: omartela <omartela@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 12:17:17 by omartela          #+#    #+#             */
-/*   Updated: 2025/03/21 14:02:44 by omartela         ###   ########.fr       */
+/*   Updated: 2025/03/24 18:43:21 by omartela         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ class PmergeMe
 {
 private:
     std::vector<int> _vec;
+    size_t _jbth;
+    size_t _jbthprevious;
 public:
     PmergeMe();
     ~PmergeMe();
@@ -26,6 +28,8 @@ public:
     bool isValidValue(std::string value);
     int ConvertValue(std::string str);
     int parseInput(int argc, char **argv);
-    void mergeSort();
+    int calcJacobsthal(int n);
+    void mergeSort(size_t pairsize, bool insert);
+    void printVector();
 };
 

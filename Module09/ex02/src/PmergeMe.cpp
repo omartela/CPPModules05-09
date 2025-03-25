@@ -15,7 +15,17 @@
 #include <algorithm>
 #include <math.h>
 
-int PmergeMe::nbr_of_comps = 0;
+size_t PmergeMe::nbr_of_comps = 0;
+
+void PmergeMe::incr_nbr_of_comps()
+{
+    nbr_of_comps++;
+}
+
+size_t PmergeMe::get_nbr_of_comps()
+{
+    return (nbr_of_comps);
+}
 
 PmergeMe::PmergeMe() 
 {
@@ -166,7 +176,7 @@ void PmergeMe::mergeSort(size_t pairsize, bool insert)
             }
 
             // Compare the last elements of the two pairs
-            if (mid - 1 < _vec.size() && end - 1 < _vec.size() && _vec[mid - 1] > _vec[end - 1])
+            if (mid - 1 < _vec.size() && end - 1 < _vec.size() && _comp(_vec[end - 1], _vec[mid - 1]))
             {
                 // Swap the pairs if the last element of the right pair is smaller
                 for (size_t k = 0; k < pairsize && mid + k < end; ++k)
@@ -213,41 +223,12 @@ void PmergeMe::mergeSort(size_t pairsize, bool insert)
             main.push_back(temp[i]);
         }
     }
-
-   /*  std::cout << "TEMP" << std::endl;
-    for (size_t i = 0; i < temp.size(); ++i)
-    {
-        for (size_t j = 0; j < temp[i].size(); ++j)
-        {
-            std::cout << temp[i][j] << " ";
-        }
-        std::cout << std::endl;
-    }
-    std::cout << "Pairsize: " << pairsize << std::endl;
-    std::cout << "MAIN:" << std::endl;
-    for (size_t i = 0; i < main.size(); ++i)
-    {
-        for (size_t j = 0; j < main[i].size(); ++j)
-        {
-            std::cout << main[i][j] << " ";
-        }
-        std::cout << std::endl;
-    }
-    std::cout << "PEND:" << std::endl;
-    for (size_t i = 0; i < pend.size(); ++i)
-    {
-        for (size_t j = 0; j < pend[i].size(); ++j)
-        {
-            std::cout << pend[i][j] << " ";
-        }
-        std::cout << std::endl;
-    } */
     size_t boundElement;
     // Start inserting from pend to main
     // Check bound element... for example b3 bound element in main is a3
     // bound element marks the search area.
     // jacobsthal number - 2 is the correct index of b element in the pend vector
-    while (pend.size() > 0 && pend[0].size())
+    while (pend.size() > 0)
     {
         for (size_t i = 0; i < (_jbth - _jbthprevious); ++i)
         {
@@ -256,10 +237,13 @@ void PmergeMe::mergeSort(size_t pairsize, bool insert)
             {
                 if (pend.size() - 1 > _jbth - 2)
                 {
-                    elementtoinsert = pend[_jbth - 2];
+                    elementtoinsert = pend[_jbth - 2 - i];
                 }
                 else
                 {
+                    // we ran out of jacobsthal numbers.. meaning we have still elements to insert
+                    // but it does not to correspond to the jacobsthal number
+                    // for example we have b6 and jacobsthal number is 11 so it its not 6.
                     elementtoinsert = pend[pend.size() - 1];
                 }
             }
@@ -287,38 +271,44 @@ void PmergeMe::mergeSort(size_t pairsize, bool insert)
                 }
             }
             // Insert the element to the correct place
+
+            /// there is still something wrong with calculating the bound element check it tomorrow
             size_t bound;
-            int inserted = 0;
-            if (boundElement == static_cast<size_t>(0))
-                bound = main.size();
+            bool inserted = false;
+            if (boundElement == 0)
+                bound = main.size(); /// otherwise the main.begin() + bound is out of bounds
             else
-                bound = boundElement;
-            for (size_t j = 0; j < bound; ++j)
+                bound = boundElement; /// needs to be -1 otherwise it will include the bound element also in to the search.
+            
+            auto it = std::lower_bound(main.begin(), main.begin() + bound, elementtoinsert, 
+            [pairsize](const std::vector<int>& a, const std::vector<int>& b) {
+                // Here, compare the pairsize - 1th element of each vector
+                return _comp(a[pairsize - 1], b[pairsize - 1]); 
+            });
+
+            std::vector<std::vector<int>>::iterator it2;
+            it2 = std::find(pend.begin(), pend.end(), elementtoinsert);
+            if (it2 == pend.end())
             {
-                if (main[j][pairsize - 1] > elementtoinsert[pairsize - 1])
-                {
-                    if (j == 0)
-                        main.insert(main.begin(), elementtoinsert);
-                    else
-                        main.insert(main.begin() + j, elementtoinsert);
-                    inserted = 1;
-                    if (pend.size() > 1)
-                        pend.erase(pend.begin() + _jbth - 2);
-                    else
-                        pend.erase(pend.begin());
-                    break;
-                }
+                std::cout << pairsize << std::endl;
+                std::cout << "Element to insert was not found in pend" << std::endl;
+                return;
             }
-            if (inserted == 0)
+            if (it != main.begin() + bound)
+            {
+                main.insert(it, elementtoinsert);
+                inserted = true;
+                if (it2 != pend.end())
+                    pend.erase(it2);
+            }
+            if (inserted == false)
             {
                 if (boundElement)
                     main.insert(main.begin() + bound, elementtoinsert);
                 else
                     main.push_back(elementtoinsert);
-                if (pend.size() > 1)
-                    pend.erase(pend.begin() + _jbth - 2);
-                else
-                    pend.erase(pend.begin());
+                if (it2 != pend.end())
+                    pend.erase(it2);
             }
             if (pend.size() == 0)
             {

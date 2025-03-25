@@ -13,9 +13,9 @@
 #include "../inc/PmergeMe.hpp"
 #include <cmath>
 
-int F(int n)
+size_t F(int n)
 {
-    int sum = 0;
+    size_t sum = 0;
     for (int k = 1; k <= n; ++k) {
         double value = (3.0 / 4.0) * k;
         sum += static_cast<int>(ceil(log2(value)));
@@ -37,5 +37,6 @@ int main(int argc, char **argv)
     pmm.checkSorted();
 
     std::cout << "Maximum amount of comparisons " << F(argc - 1) << std::endl;
+    std::cout << "Total comparisons in sorting " << pmm.get_nbr_of_comps() << std::endl;
     return (0);
 }

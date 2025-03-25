@@ -17,10 +17,10 @@
 class PmergeMe
 {
 private:
-    static int nbr_of_comps;
     std::vector<int> _vec;
     size_t _jbth;
     size_t _jbthprevious;
+    static size_t nbr_of_comps;
 public:
     PmergeMe();
     ~PmergeMe();
@@ -33,10 +33,12 @@ public:
     void mergeSort(size_t pairsize, bool insert);
     void printVector();
     bool checkSorted();
+    static void incr_nbr_of_comps();
+    static size_t get_nbr_of_comps();
 };
 
 template <typename T> bool _comp(T lv, T rv) 
 {
-    PmergeMe::nbr_of_comps++;
-    return *lv < *rv;
+    PmergeMe::incr_nbr_of_comps();
+    return lv < rv;
 }

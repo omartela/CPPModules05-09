@@ -17,6 +17,7 @@
 class PmergeMe
 {
 private:
+    static int nbr_of_comps;
     std::vector<int> _vec;
     size_t _jbth;
     size_t _jbthprevious;
@@ -27,9 +28,15 @@ public:
     PmergeMe& operator=(const PmergeMe &src);
     bool isValidValue(std::string value);
     int ConvertValue(std::string str);
-    int parseInput(int argc, char **argv);
-    int calcJacobsthal(int n);
+    bool parseInput(int argc, char **argv);
+    size_t calcJacobsthal(size_t current);
     void mergeSort(size_t pairsize, bool insert);
     void printVector();
+    bool checkSorted();
 };
 
+template <typename T> bool _comp(T lv, T rv) 
+{
+    PmergeMe::nbr_of_comps++;
+    return *lv < *rv;
+}

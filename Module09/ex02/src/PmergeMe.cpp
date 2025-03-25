@@ -15,6 +15,8 @@
 #include <algorithm>
 #include <math.h>
 
+int PmergeMe::nbr_of_comps = 0;
+
 PmergeMe::PmergeMe() 
 {
     _jbth = static_cast<size_t>(3);
@@ -35,6 +37,23 @@ PmergeMe& PmergeMe::operator=(const PmergeMe &src)
         this->_vec = src._vec;
     }
     return (*this);
+}
+
+bool PmergeMe::checkSorted()
+{
+    for (size_t i = 1; i < _vec.size(); i++)
+    {
+        if (_vec[i - 1] > _vec[i])
+        {
+            std::cout << i << std::endl;
+            std::cout << "_vec[i - 1] = " << _vec[i - 1] << std::endl;
+            std::cout << "_vec[i] = " << _vec[i] << std::endl;
+            std::cout << "not sorted " << std::endl;
+            return false;
+        }
+    }
+    std::cout << "Sort OK!" << std::endl;
+    return true;
 }
 
 void PmergeMe::printVector()
@@ -68,7 +87,7 @@ int PmergeMe::ConvertValue(std::string str)
     return IntValue;
 }
 
-int PmergeMe::parseInput(int argc, char **argv)
+bool PmergeMe::parseInput(int argc, char **argv)
 {
     if (argc < 2)
     {
@@ -87,21 +106,45 @@ int PmergeMe::parseInput(int argc, char **argv)
             }
             else
             {
+                std::vector<int>::iterator it;
+                it = std::find(_vec.begin(), _vec.end(), ConvertValue(argv[i]));
+                if (it != _vec.end())
+                {
+                    std::cout << "Duplicates are not allowed, Duplicate element: " << *it << std::endl;
+                    return (false);
+                }
                 _vec.push_back(ConvertValue(argv[i]));
             }
             i++;
         }
     }
-    return (0);
+    return (true);
 }
 
-int PmergeMe::calcJacobsthal(int n)
+size_t PmergeMe::calcJacobsthal(size_t current)
 {
-    if (n == 0)
-        return 0;
-    if (n == 1)
-        return 1;
-    return (2 * calcJacobsthal(n - 1) + calcJacobsthal(n - 2));
+    // The first two Jacobsthal numbers are 0 and 1
+    if (current == 0)
+        return 0; // J(1)
+    if (current == 1)
+        return 1; // J(2)
+    
+    size_t prev = 0;
+    size_t currentValue = 1;
+
+    // Continue generating the sequence until we find the correct current
+    while (true)
+    {
+        size_t nextValue = currentValue + 2 * prev; // Calculate next Jacobsthal number
+        if (currentValue == current)
+        {
+            return nextValue; // Return the next number
+        }
+
+        // Update for next iteration
+        prev = currentValue;
+        currentValue = nextValue;
+    }
 }
 
 void PmergeMe::mergeSort(size_t pairsize, bool insert)
@@ -132,21 +175,21 @@ void PmergeMe::mergeSort(size_t pairsize, bool insert)
         }
         mergeSort(pairsize * 2, insert);
     }
-        /// convert _vector to 2d vector with pairsize to temp
-        std::vector<std::vector<int>> temp;  
+    /// convert _vector to 2d vector with pairsize to temp
+    std::vector<std::vector<int>> temp;  
 
-        for (size_t i = 0; i < _vec.size(); i += pairsize)  
+    for (size_t i = 0; i < _vec.size(); i += pairsize)  
+    {  
+        std::vector<int> chunk;  
+        
+        // Kopioidaan seuraavat "pairsize" alkioita tai loput, jos ei riitä täyttä lohkoa  
+        for (size_t j = i; j < i + pairsize && j < _vec.size() && i + pairsize <= _vec.size(); ++j)  
         {  
-            std::vector<int> chunk;  
-            
-            // Kopioidaan seuraavat "pairsize" alkioita tai loput, jos ei riitä täyttä lohkoa  
-            for (size_t j = i; j < i + pairsize && j < _vec.size() && i + pairsize <= _vec.size(); ++j)  
-            {  
-                chunk.push_back(_vec[j]);  
-            }  
-            
+            chunk.push_back(_vec[j]);  
+        }  
+        if (!chunk.empty())
             temp.push_back(chunk);  // Lisätään lohko temp-vektoriin  
-        }
+    }
 
 
     std::vector<std::vector<int>> pend; // pend is b2 and rest of b:s
@@ -171,7 +214,7 @@ void PmergeMe::mergeSort(size_t pairsize, bool insert)
         }
     }
 
-    std::cout << "TEMP" << std::endl;
+   /*  std::cout << "TEMP" << std::endl;
     for (size_t i = 0; i < temp.size(); ++i)
     {
         for (size_t j = 0; j < temp[i].size(); ++j)
@@ -198,9 +241,7 @@ void PmergeMe::mergeSort(size_t pairsize, bool insert)
             std::cout << pend[i][j] << " ";
         }
         std::cout << std::endl;
-    }
-
-
+    } */
     size_t boundElement;
     // Start inserting from pend to main
     // Check bound element... for example b3 bound element in main is a3
@@ -212,7 +253,16 @@ void PmergeMe::mergeSort(size_t pairsize, bool insert)
         {
             std::vector<int> elementtoinsert;
             if (pend.size() > 1)
-                elementtoinsert = pend[_jbth - 2];
+            {
+                if (pend.size() - 1 > _jbth - 2)
+                {
+                    elementtoinsert = pend[_jbth - 2];
+                }
+                else
+                {
+                    elementtoinsert = pend[pend.size() - 1];
+                }
+            }
             else
                 elementtoinsert = pend[0];
             // Find the bound element
@@ -261,7 +311,10 @@ void PmergeMe::mergeSort(size_t pairsize, bool insert)
             }
             if (inserted == 0)
             {
-                main.push_back(elementtoinsert);
+                if (boundElement)
+                    main.insert(main.begin() + bound, elementtoinsert);
+                else
+                    main.push_back(elementtoinsert);
                 if (pend.size() > 1)
                     pend.erase(pend.begin() + _jbth - 2);
                 else

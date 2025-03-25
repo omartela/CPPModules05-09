@@ -140,7 +140,7 @@ void PmergeMe::mergeSort(size_t pairsize, bool insert)
             std::vector<int> chunk;  
             
             // Kopioidaan seuraavat "pairsize" alkioita tai loput, jos ei riitä täyttä lohkoa  
-            for (size_t j = i; j < i + pairsize && j < _vec.size(); ++j)  
+            for (size_t j = i; j < i + pairsize && j < _vec.size() && i + pairsize <= _vec.size(); ++j)  
             {  
                 chunk.push_back(_vec[j]);  
             }  
@@ -206,7 +206,7 @@ void PmergeMe::mergeSort(size_t pairsize, bool insert)
     // Check bound element... for example b3 bound element in main is a3
     // bound element marks the search area.
     // jacobsthal number - 2 is the correct index of b element in the pend vector
-    while (pend.size() > 0)
+    while (pend.size() > 0 && pend[0].size())
     {
         for (size_t i = 0; i < (_jbth - _jbthprevious); ++i)
         {

@@ -31,12 +31,16 @@ int main(int argc, char **argv)
     if (!pmm.parseInput(argc, argv))
         return (1);
     pmm.mergeSort(static_cast<size_t>(1), false);
+    pmm.mergeSortDeque(static_cast<size_t>(1), false);
     // Prints the vector
     std::cout << "Sorted vector: ";
     pmm.printVector();
     pmm.checkSorted();
+    pmm.printDeque();
+    pmm.checkSortedDeque();
 
     std::cout << "Maximum amount of comparisons " << F(argc - 1) << std::endl;
-    std::cout << "Total comparisons in sorting " << pmm.get_nbr_of_comps() << std::endl;
+    std::cout << "Total comparisons in sorting for vector " << pmm.get_nbr_of_comps() << std::endl;
+    std::cout << "Total comparisons in sorting for deque " << pmm.get_nbr_of_comps_deque() << std::endl;
     return (0);
 }

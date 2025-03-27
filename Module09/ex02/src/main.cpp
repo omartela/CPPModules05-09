@@ -6,7 +6,7 @@
 /*   By: omartela <omartela@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 12:08:47 by omartela          #+#    #+#             */
-/*   Updated: 2025/03/24 18:45:04 by omartela         ###   ########.fr       */
+/*   Updated: 2025/03/27 11:29:51 by omartela         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ int main(int argc, char **argv)
     std::cout << "Sorted vector: ";
     pmm.printVector();
     pmm.checkSorted();
+    std::cout << "Sorted deque: ";
     pmm.printDeque();
     pmm.checkSortedDeque();
 

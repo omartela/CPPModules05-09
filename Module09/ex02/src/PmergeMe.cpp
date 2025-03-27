@@ -6,7 +6,7 @@
 /*   By: omartela <omartela@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 12:19:23 by omartela          #+#    #+#             */
-/*   Updated: 2025/03/24 18:44:12 by omartela         ###   ########.fr       */
+/*   Updated: 2025/03/27 11:37:44 by omartela         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -269,25 +269,25 @@ void PmergeMe::mergeSortDeque(size_t pairsize, bool insert)
     // Check bound element... for example b3 bound element in main is a3
     // bound element marks the search area.
     // jacobsthal number - 2 is the correct index of b element in the pend vector
-    std::cout << "jbth: " << _jbth << " jbthprev: " << _jbthprevious << std::endl; 
     while (pend.size() > 0)
     {
-        std::cout << "Pairsize: " << pairsize << std::endl;
-        std::cout << "Temp :" << std::endl;
-        _print_sequence(temp, temp.size(), pairsize);
-        std::cout << "Main :" << std::endl;
-        _print_sequence(main, main.size(), pairsize);
-        std::cout << "Pend :" << std::endl;
-        _print_sequence(pend, pend.size(), pairsize);
-        std::cout << "jbth: " << _jbth << " jbthprev: " << _jbthprevious << std::endl; 
-        for (size_t i = 0; i < (_jbth - _jbthprevious); ++i)
+        // std::cout << "jbth: " << _jbthdeq << " jbthprev: " << _jbthpreviousdeq << std::endl; 
+        // std::cout << "Pairsize: " << pairsize << std::endl;
+        // std::cout << "Temp :" << std::endl;
+        // _print_sequence(temp, temp.size(), pairsize);
+        // std::cout << "Main :" << std::endl;
+        // _print_sequence(main, main.size(), pairsize);
+        // std::cout << "Pend :" << std::endl;
+        // _print_sequence(pend, pend.size(), pairsize);
+        for (size_t i = 0; i < (_jbthdeq - _jbthpreviousdeq); ++i)
         {
+            size_t difference = _jbthdeq - _jbthpreviousdeq;
             std::deque<int> elementtoinsert;
             if (pend.size() >= 1)
             {
-                if (pend.size() - 1 > _jbth - 2 - i)
+                if (pend.size() - 1 > difference - 1 - i)
                 {
-                    elementtoinsert = pend[_jbth - 2 - i];
+                    elementtoinsert = pend[difference - 1 - i];
                 }
                 else
                 {
@@ -296,12 +296,12 @@ void PmergeMe::mergeSortDeque(size_t pairsize, bool insert)
                     // for example we have b6 and jacobsthal number is 11 so it its not 6.
                     elementtoinsert = pend[pend.size() - 1];
                 }
-                std::cout << "elementtoinsert: " << std::endl;
-                for (size_t i = 0; i < elementtoinsert.size(); ++i)
-                {
-                    std::cout << elementtoinsert[i] << " ";
-                }
-                std::cout << std::endl;
+                //std::cout << "elementtoinsert: " << std::endl;
+                // for (size_t i = 0; i < elementtoinsert.size(); ++i)
+                // {
+                //     std::cout << elementtoinsert[i] << " ";
+                // }
+                // std::cout << std::endl;
             }
             else
                 elementtoinsert = pend[0];
@@ -378,14 +378,14 @@ void PmergeMe::mergeSortDeque(size_t pairsize, bool insert)
                         k++;
                     }
                 }
+                _jbthdeq = 3;
+                _jbthpreviousdeq = 1;
                 return;
             }
         }
         _jbthpreviousdeq = _jbthdeq;
-        _jbthpreviousdeq = calcJacobsthal(_jbthdeq);
+        _jbthdeq = calcJacobsthal(_jbthdeq);
     }
-    _jbthdeq = 3;
-    _jbthpreviousdeq = 1;
 }
 
 
@@ -464,12 +464,13 @@ void PmergeMe::mergeSort(size_t pairsize, bool insert)
     {
         for (size_t i = 0; i < (_jbth - _jbthprevious); ++i)
         {
+            size_t difference = _jbth - _jbthprevious;
             std::vector<int> elementtoinsert;
             if (pend.size() >= 1)
             {
-                if (pend.size() - 1 > _jbth - 2 - i)
+                if (pend.size() - 1 > difference - 1 - i)
                 {
-                    elementtoinsert = pend[_jbth - 2 - i];
+                    elementtoinsert = pend[difference - 1 - i];
                 }
                 else
                 {
@@ -554,14 +555,14 @@ void PmergeMe::mergeSort(size_t pairsize, bool insert)
                         k++;
                     }
                 }
+                _jbth = 3;
+                _jbthprevious = 1;
                 return;
             }
         }
         _jbthprevious = _jbth;
         _jbth = calcJacobsthal(_jbth);
     }
-    _jbth = 3;
-    _jbthprevious = 1;
 }
 
 

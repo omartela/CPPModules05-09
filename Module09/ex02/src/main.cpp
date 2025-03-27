@@ -61,12 +61,14 @@ int main(int argc, char **argv)
     // Prints the vector
     std::cout << "After: ";
     pmm.printVector();
+    std::cout << "Time to process a range of " << argc - 1 << " elements with std::vector : " << (durationvector + durationparsevec).count() << " microseconds" << std::endl;
+    std::cout << "Time to process a range of " << argc - 1 << " elements with std::deque : " << (durationdeque + durationparsedeque).count() << " microseconds" << std::endl;
     //pmm.checkSorted();
    /*  std::cout << "Sorted deque: ";
     pmm.printDeque(); */
     //pmm.checkSortedDeque();
 
-   /*  std::cout << "Maximum amount of comparisons " << F(argc - 1) << std::endl;
+    /* std::cout << "Maximum amount of comparisons " << F(argc - 1) << std::endl;
     std::cout << "Total comparisons in sorting for vector " << pmm.get_nbr_of_comps() << std::endl;
     std::cout << "Total comparisons in sorting for deque " << pmm.get_nbr_of_comps_deque() << std::endl; */
     return (0);

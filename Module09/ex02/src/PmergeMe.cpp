@@ -146,7 +146,7 @@ bool PmergeMe::parseInputDeque(char **argv)
         if (!isValidValue(argv[i]))
         {
             std::cerr << "Error: invalid input" << std::endl;
-            return (1);
+            return (false);
         }
         else
         {
@@ -154,7 +154,7 @@ bool PmergeMe::parseInputDeque(char **argv)
             it = std::find(_deq.begin(), _deq.end(), ConvertValue(argv[i]));
             if (it != _deq.end())
             {
-                std::cout << "Duplicates are not allowed, Duplicate element: " << *it << std::endl;
+                std::cerr << "Duplicates are not allowed, Duplicate element: " << *it << std::endl;
                 return (false);
             }
             _deq.push_back(ConvertValue(argv[i]));
@@ -173,7 +173,7 @@ bool PmergeMe::parseInput(char **argv)
         if (!isValidValue(argv[i]))
         {
             std::cerr << "Error: invalid input" << std::endl;
-            return (1);
+            return (false);
         }
         else
         {
@@ -181,7 +181,7 @@ bool PmergeMe::parseInput(char **argv)
             it = std::find(_vec.begin(), _vec.end(), ConvertValue(argv[i]));
             if (it != _vec.end())
             {
-                std::cout << "Duplicates are not allowed, Duplicate element: " << *it << std::endl;
+                std::cerr << "Duplicates are not allowed, Duplicate element: " << *it << std::endl;
                 return (false);
             }
             _vec.push_back(ConvertValue(argv[i]));
@@ -366,7 +366,7 @@ void PmergeMe::mergeSortDeque(size_t pairsize, bool insert)
             if (it2 == pend.end())
             {
                 std::cout << pairsize << std::endl;
-                std::cout << "Element to insert was not found in pend" << std::endl;
+                std::cerr << "Element to insert was not found in pend" << std::endl;
                 return;
             }
             if (it != main.begin() + bound)
@@ -543,7 +543,7 @@ void PmergeMe::mergeSort(size_t pairsize, bool insert)
             if (it2 == pend.end())
             {
                 std::cout << pairsize << std::endl;
-                std::cout << "Element to insert was not found in pend" << std::endl;
+                std::cerr << "Element to insert was not found in pend" << std::endl;
                 return;
             }
             if (it != main.begin() + bound)

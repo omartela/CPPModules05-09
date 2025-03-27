@@ -137,37 +137,56 @@ int PmergeMe::ConvertValue(std::string str)
     return IntValue;
 }
 
-bool PmergeMe::parseInput(int argc, char **argv)
+bool PmergeMe::parseInputDeque(char **argv)
 {
-    if (argc < 2)
+    
+    int i = 1;
+    while (argv[i])
     {
-        std::cout << "Usage: ./PmergeMe [positive integers]" << std::endl;
-        return (1);
-    }
-    else
-    {
-        int i = 1;
-        while (argv[i])
+        if (!isValidValue(argv[i]))
         {
-            if (!isValidValue(argv[i]))
-            {
-                std::cerr << "Error: invalid input" << std::endl;
-                return (1);
-            }
-            else
-            {
-                std::vector<int>::iterator it;
-                it = std::find(_vec.begin(), _vec.end(), ConvertValue(argv[i]));
-                if (it != _vec.end())
-                {
-                    std::cout << "Duplicates are not allowed, Duplicate element: " << *it << std::endl;
-                    return (false);
-                }
-                _vec.push_back(ConvertValue(argv[i]));
-                _deq.push_back(ConvertValue(argv[i]));
-            }
-            i++;
+            std::cerr << "Error: invalid input" << std::endl;
+            return (1);
         }
+        else
+        {
+            std::deque<int>::iterator it;
+            it = std::find(_deq.begin(), _deq.end(), ConvertValue(argv[i]));
+            if (it != _deq.end())
+            {
+                std::cout << "Duplicates are not allowed, Duplicate element: " << *it << std::endl;
+                return (false);
+            }
+            _deq.push_back(ConvertValue(argv[i]));
+        }
+        i++;
+    }
+    return (true);
+}
+
+bool PmergeMe::parseInput(char **argv)
+{
+    
+    int i = 1;
+    while (argv[i])
+    {
+        if (!isValidValue(argv[i]))
+        {
+            std::cerr << "Error: invalid input" << std::endl;
+            return (1);
+        }
+        else
+        {
+            std::vector<int>::iterator it;
+            it = std::find(_vec.begin(), _vec.end(), ConvertValue(argv[i]));
+            if (it != _vec.end())
+            {
+                std::cout << "Duplicates are not allowed, Duplicate element: " << *it << std::endl;
+                return (false);
+            }
+            _vec.push_back(ConvertValue(argv[i]));
+        }
+        i++;
     }
     return (true);
 }

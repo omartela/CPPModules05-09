@@ -16,7 +16,7 @@ TARGET = PmergeMe
 INC_DIR = inc
 SRC = src/main.cpp src/PmergeMe.cpp
 OBJ = $(SRC:.cpp=.o)
-CFLAGS = -g -Wall -Wextra -Werror -I$(INC_DIR)
+CFLAGS = -Wall -Wextra -Werror -I$(INC_DIR)
 
 all: $(TARGET)
 

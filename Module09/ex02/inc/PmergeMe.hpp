@@ -33,7 +33,8 @@ public:
     PmergeMe& operator=(const PmergeMe &src);
     bool isValidValue(std::string value);
     int ConvertValue(std::string str);
-    bool parseInput(int argc, char **argv);
+    bool parseInput(char **argv);
+    bool parseInputDeque(char **argv);
     size_t calcJacobsthal(size_t current);
     void mergeSort(size_t pairsize, bool insert);
     void mergeSortDeque(size_t pairsize, bool insert);

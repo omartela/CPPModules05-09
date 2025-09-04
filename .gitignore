@@ -1,0 +1,29 @@
+# Build artifacts
+*.o
+*.a
+*.so
+*.dylib
+
+# Executables
+Bureaucrat
+Form
+ScalarConverter
+Serializer
+RPN
+BitcoinExchange
+PmergeMe
+Span
+easyfind
+Array
+functions
+mutantstack
+
+# System files
+.DS_Store
+.vscode/
+*.dSYM/
+
+# Temporary files
+*.tmp
+*.temp
+/tmp/

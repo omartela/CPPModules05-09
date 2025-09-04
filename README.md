@@ -168,21 +168,11 @@ By completing these modules, you will gain proficiency in:
 
 ## 📋 Requirements
 
-- All code follows C++98 standard
 - Orthodox Canonical Form implementation for classes
 - No memory leaks (all heap allocations properly managed)
 - Proper exception handling and safety
 - Comprehensive error checking and validation
 - Clean, readable, and well-documented code
-
-## 🤝 42 School Standards
-
-This project adheres to the 42 school coding standard:
-- 25-line function limit
-- 5-function-per-file limit  
-- Norminette-compliant formatting
-- Comprehensive error handling
-- No standard library usage restrictions beyond C++98
 
 ## 📝 Notes
 

@@ -1,0 +1,40 @@
+# Build artifacts
+*.o
+*.a
+*.so
+*.dylib
+
+# Executables (by module and exercise)
+Bureaucrat
+Form
+ShrubberyCreationForm
+RobotomyRequestForm
+PresidentialPardonForm
+Intern
+convert
+serialize
+identify
+functions
+iter
+array
+easyfind
+span
+mutantstack
+btc
+RPN
+PmergeMe
+
+# Common executable names
+main
+test
+a.out
+
+# System files
+.DS_Store
+.vscode/
+*.dSYM/
+
+# Temporary files
+*.tmp
+*.temp
+/tmp/
